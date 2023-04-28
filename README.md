@@ -10,7 +10,7 @@
     npm install simp-spec
     ```
 
-2. 声明测试用例, 这里推荐使用断言库 `chai` 配合测试用例使用.
+2. 声明测试用例, 这里推荐使用断言库 [chai](https://github.com/chaijs/chai) 配合测试用例使用.
 
     my-test.spec.js
     ```js
