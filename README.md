@@ -45,6 +45,7 @@
     }
     ```
 
+- 更多 API 说明访问: https://krstar233.github.io/simp-spec/
 
 ## webpack 最佳实践
 
@@ -80,5 +81,3 @@
     const specs = await batchImport();
     await runTests(specs);
     ```
-
-更多API 访问: xxx
