@@ -18,6 +18,8 @@
     OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
+    /* global Reflect, Promise */
+
 
     function __awaiter(thisArg, _arguments, P, generator) {
         function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -164,14 +166,12 @@
     function runTests(specs) {
         var _this = this;
         var thisRunTaskID = ++runTaskID;
-        specs.forEach(function (item) {
-            item();
-        });
         var runTask = getRunTask();
         return new Promise(function (res, rej) { return __awaiter(_this, void 0, void 0, function () {
-            var passCount, specKey, itKey, successResult, failResult, printPassMsg, _a, _b, _c, _i, specItem, _d, _e, _f, _g, tmpItKey, tmpItKey, err_1;
-            return __generator(this, function (_h) {
-                switch (_h.label) {
+            var passCount, specKey, itKey, successResult, failResult, printPassMsg, RunSpecInRunTask, _i, specs_1, specBuilder, err_1;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         passCount = 0;
                         successResult = function () {
@@ -201,93 +201,115 @@
                         window.addEventListener("unhandledrejection", function (ev) {
                             res(failResult(ev.reason));
                         });
-                        _h.label = 1;
+                        _a.label = 1;
                     case 1:
-                        _h.trys.push([1, 17, , 18]);
-                        _a = runTask;
-                        _b = [];
-                        for (_c in _a)
-                            _b.push(_c);
-                        _i = 0;
-                        _h.label = 2;
+                        _a.trys.push([1, 6, , 7]);
+                        RunSpecInRunTask = function () { return __awaiter(_this, void 0, void 0, function () {
+                            var _a, _b, _c, _i, specItem, _d, _e, _f, _g, tmpItKey, tmpItKey;
+                            return __generator(this, function (_h) {
+                                switch (_h.label) {
+                                    case 0:
+                                        _a = runTask;
+                                        _b = [];
+                                        for (_c in _a)
+                                            _b.push(_c);
+                                        _i = 0;
+                                        _h.label = 1;
+                                    case 1:
+                                        if (!(_i < _b.length)) return [3 /*break*/, 15];
+                                        _c = _b[_i];
+                                        if (!(_c in _a)) return [3 /*break*/, 14];
+                                        specKey = _c;
+                                        specItem = runTask[specKey];
+                                        if (!specItem[beforeAllLabel]) return [3 /*break*/, 3];
+                                        return [4 /*yield*/, specItem[beforeAllLabel]()];
+                                    case 2:
+                                        _h.sent();
+                                        delete specItem[beforeAllLabel];
+                                        _h.label = 3;
+                                    case 3:
+                                        _d = specItem;
+                                        _e = [];
+                                        for (_f in _d)
+                                            _e.push(_f);
+                                        _g = 0;
+                                        _h.label = 4;
+                                    case 4:
+                                        if (!(_g < _e.length)) return [3 /*break*/, 11];
+                                        _f = _e[_g];
+                                        if (!(_f in _d)) return [3 /*break*/, 10];
+                                        itKey = _f;
+                                        // Skip Not It()
+                                        if (Object.values(labelMap).includes(itKey)) {
+                                            return [3 /*break*/, 10];
+                                        }
+                                        if (!specItem[beforeEachLabel]) return [3 /*break*/, 6];
+                                        tmpItKey = itKey;
+                                        itKey = beforeEachLabel;
+                                        return [4 /*yield*/, specItem[itKey]()];
+                                    case 5:
+                                        _h.sent();
+                                        itKey = tmpItKey;
+                                        _h.label = 6;
+                                    case 6: 
+                                    // It()
+                                    return [4 /*yield*/, specItem[itKey]()];
+                                    case 7:
+                                        // It()
+                                        _h.sent();
+                                        if (!specItem[afterEachLabel]) return [3 /*break*/, 9];
+                                        tmpItKey = itKey;
+                                        itKey = afterEachLabel;
+                                        return [4 /*yield*/, specItem[itKey]()];
+                                    case 8:
+                                        _h.sent();
+                                        itKey = tmpItKey;
+                                        _h.label = 9;
+                                    case 9:
+                                        passCount++;
+                                        printPassMsg();
+                                        delete specItem[itKey];
+                                        _h.label = 10;
+                                    case 10:
+                                        _g++;
+                                        return [3 /*break*/, 4];
+                                    case 11:
+                                        if (!specItem[afterAllLabel]) return [3 /*break*/, 13];
+                                        return [4 /*yield*/, specItem[afterAllLabel]()];
+                                    case 12:
+                                        _h.sent();
+                                        delete specItem[afterAllLabel];
+                                        _h.label = 13;
+                                    case 13:
+                                        delete runTask[specKey];
+                                        _h.label = 14;
+                                    case 14:
+                                        _i++;
+                                        return [3 /*break*/, 1];
+                                    case 15: return [2 /*return*/];
+                                }
+                            });
+                        }); };
+                        _i = 0, specs_1 = specs;
+                        _a.label = 2;
                     case 2:
-                        if (!(_i < _b.length)) return [3 /*break*/, 16];
-                        _c = _b[_i];
-                        if (!(_c in _a)) return [3 /*break*/, 15];
-                        specKey = _c;
-                        specItem = runTask[specKey];
-                        if (!specItem[beforeAllLabel]) return [3 /*break*/, 4];
-                        return [4 /*yield*/, specItem[beforeAllLabel]()];
+                        if (!(_i < specs_1.length)) return [3 /*break*/, 5];
+                        specBuilder = specs_1[_i];
+                        specBuilder();
+                        return [4 /*yield*/, RunSpecInRunTask()];
                     case 3:
-                        _h.sent();
-                        delete specItem[beforeAllLabel];
-                        _h.label = 4;
+                        _a.sent();
+                        _a.label = 4;
                     case 4:
-                        _d = specItem;
-                        _e = [];
-                        for (_f in _d)
-                            _e.push(_f);
-                        _g = 0;
-                        _h.label = 5;
-                    case 5:
-                        if (!(_g < _e.length)) return [3 /*break*/, 12];
-                        _f = _e[_g];
-                        if (!(_f in _d)) return [3 /*break*/, 11];
-                        itKey = _f;
-                        // Skip Not It()
-                        if (Object.values(labelMap).includes(itKey)) {
-                            return [3 /*break*/, 11];
-                        }
-                        if (!specItem[beforeEachLabel]) return [3 /*break*/, 7];
-                        tmpItKey = itKey;
-                        itKey = beforeEachLabel;
-                        return [4 /*yield*/, specItem[itKey]()];
-                    case 6:
-                        _h.sent();
-                        itKey = tmpItKey;
-                        _h.label = 7;
-                    case 7: 
-                    // It()
-                    return [4 /*yield*/, specItem[itKey]()];
-                    case 8:
-                        // It()
-                        _h.sent();
-                        if (!specItem[afterEachLabel]) return [3 /*break*/, 10];
-                        tmpItKey = itKey;
-                        itKey = afterEachLabel;
-                        return [4 /*yield*/, specItem[itKey]()];
-                    case 9:
-                        _h.sent();
-                        itKey = tmpItKey;
-                        _h.label = 10;
-                    case 10:
-                        passCount++;
-                        printPassMsg();
-                        delete specItem[itKey];
-                        _h.label = 11;
-                    case 11:
-                        _g++;
-                        return [3 /*break*/, 5];
-                    case 12:
-                        if (!specItem[afterAllLabel]) return [3 /*break*/, 14];
-                        return [4 /*yield*/, specItem[afterAllLabel]()];
-                    case 13:
-                        _h.sent();
-                        delete specItem[afterAllLabel];
-                        _h.label = 14;
-                    case 14:
-                        delete runTask[specKey];
-                        _h.label = 15;
-                    case 15:
                         _i++;
                         return [3 /*break*/, 2];
-                    case 16: return [3 /*break*/, 18];
-                    case 17:
-                        err_1 = _h.sent();
+                    case 5: return [3 /*break*/, 7];
+                    case 6:
+                        err_1 = _a.sent();
                         delete specsMap[thisRunTaskID];
                         res(failResult(err_1));
-                        return [3 /*break*/, 18];
-                    case 18:
+                        return [3 /*break*/, 7];
+                    case 7:
                         delete specsMap[thisRunTaskID];
                         res(successResult());
                         return [2 /*return*/];

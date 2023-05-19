@@ -12,7 +12,7 @@ const labelMap = {
   afterAllLabel,
   beforeEachLabel,
   afterEachLabel
-}
+};
 
 /**
  * 测试结果
@@ -40,7 +40,7 @@ const getRunTask = () => {
     specsMap[runTaskID][buildingTitle] = {};
   }
   return specsMap[runTaskID];
-}
+};
 /**
  * 声明测试用例的 Hook
  * @param title 测试用例标题
@@ -111,7 +111,7 @@ export function afterEach(fn: (done: () => void) => void): void {
  * @param fn 描述函数, 函数内包含若干测试用例
  * @returns Function
  */
-export function spec(title: string, fn: Function): Function {
+export function spec(title: string, fn: () => void): () => any {
   return () => {
     buildingTitle = title;
     fn();
@@ -124,9 +124,6 @@ export function spec(title: string, fn: Function): Function {
  */
 export function runTests(specs: any[]): Promise<TestResult> {
   const thisRunTaskID = ++runTaskID;
-  specs.forEach(item => {
-    item();
-  });
 
   const runTask = getRunTask();
 
@@ -161,44 +158,50 @@ export function runTests(specs: any[]): Promise<TestResult> {
       res(failResult(ev.reason));
     });
     try {
-      for (specKey in runTask) {
-        const specItem = runTask[specKey];
-        // BeforeAll()
-        if (specItem[beforeAllLabel]) {
-          await specItem[beforeAllLabel]();
-          delete specItem[beforeAllLabel];
-        }
-        for (itKey in specItem) {
-          // Skip Not It()
-          if (Object.values(labelMap).includes(itKey)) {
-            continue;
+      const RunSpecInRunTask = async () => {
+        for (specKey in runTask) {
+          const specItem = runTask[specKey];
+          // BeforeAll()
+          if (specItem[beforeAllLabel]) {
+            await specItem[beforeAllLabel]();
+            delete specItem[beforeAllLabel];
           }
-          // BeforEach()
-          if (specItem[beforeEachLabel]) {
-            const tmpItKey = itKey;
-            itKey = beforeEachLabel;
+          for (itKey in specItem) {
+            // Skip Not It()
+            if (Object.values(labelMap).includes(itKey)) {
+              continue;
+            }
+            // BeforEach()
+            if (specItem[beforeEachLabel]) {
+              const tmpItKey = itKey;
+              itKey = beforeEachLabel;
+              await specItem[itKey]();
+              itKey = tmpItKey;
+            }
+            // It()
             await specItem[itKey]();
-            itKey = tmpItKey;
+            // AfterEach()
+            if (specItem[afterEachLabel]) {
+              const tmpItKey = itKey;
+              itKey = afterEachLabel;
+              await specItem[itKey]();
+              itKey = tmpItKey;
+            }
+            passCount++;
+            printPassMsg();
+            delete specItem[itKey];
           }
-          // It()
-          await specItem[itKey]();
-          // AfterEach()
-          if (specItem[afterEachLabel]) {
-            const tmpItKey = itKey;
-            itKey = afterEachLabel;
-            await specItem[itKey]();
-            itKey = tmpItKey;
+          // AfterAll()
+          if (specItem[afterAllLabel]) {
+            await specItem[afterAllLabel]();
+            delete specItem[afterAllLabel];
           }
-          passCount++;
-          printPassMsg();
-          delete specItem[itKey];
+          delete runTask[specKey];
         }
-        // AfterAll()
-        if (specItem[afterAllLabel]) {
-          await specItem[afterAllLabel]();
-          delete specItem[afterAllLabel];
-        }
-        delete runTask[specKey];
+      };
+      for (const specBuilder of specs) {
+        specBuilder();
+        await RunSpecInRunTask();
       }
     } catch (err) {
       delete specsMap[thisRunTaskID];

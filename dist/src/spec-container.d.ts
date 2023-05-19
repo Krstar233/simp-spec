@@ -47,7 +47,7 @@ export declare function afterEach(fn: (done: () => void) => void): void;
  * @param fn 描述函数, 函数内包含若干测试用例
  * @returns Function
  */
-export declare function spec(title: string, fn: Function): Function;
+export declare function spec(title: string, fn: () => void): () => any;
 /**
  * 运行测试用例集
  * @param specs Array 所有要运行的构建测试集的 Hook 列表
