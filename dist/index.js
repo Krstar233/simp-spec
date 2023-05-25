@@ -18,6 +18,8 @@
     OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
+    /* global Reflect, Promise */
+
 
     function __awaiter(thisArg, _arguments, P, generator) {
         function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -58,18 +60,18 @@
     }
 
     var specsMap = {};
-    var buildingTitle = "__SimpSpec_Test";
+    var buildingTitle = '__SimpSpec_Test';
     var runTaskID = 0;
-    var labelPrefix = "__SimpSpec_Test__";
-    var beforeAllLabel = labelPrefix + "beforeAll";
-    var afterAllLabel = labelPrefix + "afterAll";
-    var beforeEachLabel = labelPrefix + "beforeEach";
-    var afterEachLabel = labelPrefix + "afterEach";
+    var labelPrefix = '__SimpSpec_Test__';
+    var beforeAllLabel = labelPrefix + 'beforeAll';
+    var afterAllLabel = labelPrefix + 'afterAll';
+    var beforeEachLabel = labelPrefix + 'beforeEach';
+    var afterEachLabel = labelPrefix + 'afterEach';
     var labelMap = {
         beforeAllLabel: beforeAllLabel,
         afterAllLabel: afterAllLabel,
         beforeEachLabel: beforeEachLabel,
-        afterEachLabel: afterEachLabel
+        afterEachLabel: afterEachLabel,
     };
     var getRunTask = function () {
         if (!specsMap[runTaskID]) {
@@ -176,7 +178,7 @@
                             return {
                                 success: true,
                                 passCount: passCount,
-                                message: "ALL TESTS PASS!"
+                                message: 'ALL TESTS PASS!',
                             };
                         };
                         failResult = function (err) {
@@ -187,16 +189,16 @@
                             return {
                                 success: false,
                                 passCount: passCount,
-                                message: "[".concat(specKey, "|").concat(failItKey, "] failed. reason: ").concat(err.message)
+                                message: "[".concat(specKey, "|").concat(failItKey, "] failed. reason: ").concat(err.message),
                             };
                         };
                         printPassMsg = function () {
                             console.warn("[".concat(specKey, "|").concat(itKey, "] passed."));
                         };
-                        window.addEventListener("error", function (ev) {
+                        window.addEventListener('error', function (ev) {
                             res(failResult(ev.error));
                         });
-                        window.addEventListener("unhandledrejection", function (ev) {
+                        window.addEventListener('unhandledrejection', function (ev) {
                             res(failResult(ev.reason));
                         });
                         _a.label = 1;
@@ -293,7 +295,14 @@
                     case 2:
                         if (!(_i < specs_1.length)) return [3 /*break*/, 5];
                         specBuilder = specs_1[_i];
-                        specBuilder();
+                        try {
+                            specBuilder();
+                        }
+                        catch (err) {
+                            specKey = buildingTitle;
+                            itKey = 'spec builder';
+                            res(failResult(err));
+                        }
                         return [4 /*yield*/, RunSpecInRunTask()];
                     case 3:
                         _a.sent();
